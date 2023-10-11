@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5001:5000"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASS=12345678
+      - DB_NAME=video_management
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    command: ["/usr/local/bin/wait-for-it.sh", "mysql:3306", "--", "npm", "start"]  
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: video_management
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

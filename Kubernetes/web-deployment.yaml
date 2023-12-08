@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: dhruvdhawan11/web-app:latest 
+        env:
+          - name: DB_HOST
+            value: "mysql-service"
+          - name: DB_USER
+            value: "root"
+          - name: DB_PASS
+            value: "12345678"
+          - name: DB_NAME
+            value: "video_management"
+        ports:
+          - containerPort: 5000

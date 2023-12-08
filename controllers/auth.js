@@ -2,6 +2,7 @@ const mysql = require("mysql");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { promisify } = require("util");
+const path = require('path');
 
 const db = mysql.createConnection({
   host: process.env.HOST,
@@ -9,11 +10,12 @@ const db = mysql.createConnection({
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
 });
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).sendFile(__dirname + "/login.html", {
+      return res.status(400).sendFile(path.join(__dirname, '../public/login.html'), {
         message: "Please Provide an email and password",
       });
     }
@@ -26,7 +28,7 @@ exports.login = async (req, res) => {
           !results ||
           !(await bcrypt.compare(password, results[0].password))
         ) {
-          res.status(401).sendFile(__dirname + "/login.html", {
+          res.status(401).sendFile(path.join(__dirname, '../public/login.html'), {
             message: "Email or Password is incorrect",
           });
         } else {
@@ -64,15 +66,15 @@ exports.register = async (req, res) => {
     ]);
 
     if (results.length > 0) {
-      return res.sendFile(__dirname + "/request.html", {
+      return res.sendFile(path.join(__dirname, '../public/request.html'), {
         message: "The email is already in use",
       });
     } else if (password != passwordConfirm) {
-      return res.sendFile(__dirname + "/request.html", {
+      return res.sendFile(path.join(__dirname, '../public/request.html'), {
         message: "Password doesn't match",
       });
     }
-
+  
     let hashedPassword = await bcrypt.hash(password, 8);
     console.log(hashedPassword);
 
